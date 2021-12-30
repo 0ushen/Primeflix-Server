@@ -17,14 +17,14 @@ public class Program
             try
             {
                 var context = services.GetRequiredService<ApplicationDbContext>();
-                var movieService = services.GetRequiredService<IOMDBMovieService>();
+                var seederService = services.GetRequiredService<ISeederService>();
 
                 if (context.Database.IsSqlServer())
                 {
                     context.Database.Migrate();
                 }
 
-                await ApplicationDbContextSeed.SeedSampleDataAsync(context, movieService);
+                await ApplicationDbContextSeed.SeedSampleDataAsync(seederService);
             }
             catch (Exception ex)
             {

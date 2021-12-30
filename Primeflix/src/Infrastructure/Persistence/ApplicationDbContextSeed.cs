@@ -6,6 +6,6 @@ public static class ApplicationDbContextSeed
 {
     public static async Task SeedSampleDataAsync(ISeederService seederService)
     {
-
+        await seederService.SeedAsync();
     }
 }
