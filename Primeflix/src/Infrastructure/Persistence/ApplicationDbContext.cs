@@ -2,6 +2,7 @@
 using Primeflix.Application.Common.Interfaces;
 using Primeflix.Domain.Common;
 using Microsoft.EntityFrameworkCore;
+using Primeflix.Domain.Entities;
 
 namespace Primeflix.Infrastructure.Persistence;
 
@@ -20,7 +21,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         _domainEventService = domainEventService;
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    public DbSet<Product> Products => Set<Product>();
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
         foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
         {

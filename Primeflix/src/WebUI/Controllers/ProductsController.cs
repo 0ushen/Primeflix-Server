@@ -3,6 +3,7 @@ using Primeflix.Application.Common.Models;
 using Primeflix.Application.Products.Queries;
 using Primeflix.Application.Products.Queries.GetProductsWithPagination;
 using Microsoft.AspNetCore.Mvc;
+using Primeflix.Application.Products.Models;
 
 namespace Primeflix.WebUI.Controllers;
 

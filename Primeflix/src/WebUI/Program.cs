@@ -1,5 +1,6 @@
 using Primeflix.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Primeflix.Application.Common.Interfaces;
 
 namespace Primeflix.WebUI;
 
@@ -16,13 +17,14 @@ public class Program
             try
             {
                 var context = services.GetRequiredService<ApplicationDbContext>();
+                var movieService = services.GetRequiredService<IOMDBMovieService>();
 
                 if (context.Database.IsSqlServer())
                 {
                     context.Database.Migrate();
                 }
 
-                await ApplicationDbContextSeed.SeedSampleDataAsync(context);
+                await ApplicationDbContextSeed.SeedSampleDataAsync(context, movieService);
             }
             catch (Exception ex)
             {

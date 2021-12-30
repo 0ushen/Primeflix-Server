@@ -1,9 +1,11 @@
-﻿namespace Primeflix.Infrastructure.Persistence;
+﻿using Primeflix.Application.Common.Interfaces;
+
+namespace Primeflix.Infrastructure.Persistence;
 
 public static class ApplicationDbContextSeed
 {
-    public static async Task SeedSampleDataAsync(ApplicationDbContext context)
+    public static async Task SeedSampleDataAsync(ISeederService seederService)
     {
-        // Seed, if necessary
+
     }
 }
