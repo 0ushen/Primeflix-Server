@@ -13,7 +13,7 @@ public class OMDBMovieResultToProductMapper : Profile
         CreateMap<OMDBMovieResult, Product>()
             .ForMember(o => o.ImdbID, i => i.MapFrom(x => x.imdbID))
             .ForMember(o => o.Discount, i => i.MapFrom(_ => _random.Next(1, 10) * 10))
-            .ForMember(o => o.SalePrice, i => i.MapFrom(_ => _random.Next(1, 20)))
+            .ForMember(o => o.SalePrice, i => i.MapFrom(_ => _random.Next(10, 25)))
             .ForMember(o => o.Price, i => i.MapFrom<PriceResolver>())
             .ForMember(o => o.Stock, i => i.MapFrom(_ => _random.Next(10)))
             .ForMember(o => o.Stars, i => i.MapFrom<RatingResolver>())

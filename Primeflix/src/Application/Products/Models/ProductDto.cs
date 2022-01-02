@@ -36,7 +36,7 @@ public class ProductDto : IMapFrom<Product>
                 Small = x.SmallUrl,
                 Big = x.BigUrl
             })))
-            .ForMember(d => d.ShortDetails, opt => opt.MapFrom(s => s.Plot))
+            .ForMember(d => d.ShortDetails, opt => opt.MapFrom(s => s.Summary))
             .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Plot))
             .ForMember(d => d.Brand, opt => opt.MapFrom(_ => "movie"))
             .ForMember(d => d.NewPro, opt => opt.MapFrom(_ => true))

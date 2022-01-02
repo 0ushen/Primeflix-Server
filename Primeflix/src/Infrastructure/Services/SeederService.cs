@@ -67,6 +67,12 @@ public class SeederService : ISeederService
                 plot = "full"
             });
 
+            fullMovie.Summary = (await _omdbMovieService.GetMovieById(new OMDBIdRequest
+            {
+                i = imdbId,
+                plot = "small"
+            })).Plot;
+
             movies.Add(fullMovie);
         }
 

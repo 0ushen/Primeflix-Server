@@ -32,16 +32,6 @@ public class GetProductsWithPaginationQueryHandler : IRequestHandler<GetProducts
 
     public async Task<PaginatedList<ProductDto>> Handle(GetProductsWithPaginationQuery request, CancellationToken cancellationToken)
     {
-
-        //using StreamReader r = new("C:\\repos\\Primeflix-Web\\Primeflix\\src\\assets\\data\\products2.json");
-
-        //var json = await r.ReadToEndAsync();
-
-        //var items = JsonSerializer.Deserialize<List<ProductDto>>(json, new JsonSerializerOptions
-        //{
-        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        //});
-
         var items = await _context.Products.AsNoTracking()
                                            .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
                                            .ToListAsync(cancellationToken);
