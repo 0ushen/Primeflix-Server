@@ -1,9 +1,7 @@
 ﻿namespace Primeflix.Domain.Entities;
 
-public class Product : AuditableEntity, IHasDomainEvent
+public class Product : AuditableEntity
 {
-    public List<DomainEvent> DomainEvents { get; set; } = new List<DomainEvent>();
-
     public int Id { get; set; }
     public string Title { get; set; }
     public string Year { get; set; }
@@ -17,7 +15,7 @@ public class Product : AuditableEntity, IHasDomainEvent
     public string Plot { get; set; }
     public string Language { get; set; }
     public string Country { get; set; }
-    public string Poster { get; set; }
+    public int Stars { get; set; }
     public string ImdbID { get; set; }
     public decimal Price { get; set; }
     public decimal SalePrice { get; set; }

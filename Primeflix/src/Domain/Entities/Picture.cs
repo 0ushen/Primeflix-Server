@@ -1,9 +1,11 @@
 ﻿namespace Primeflix.Domain.Entities;
 
-public class Picture : AuditableEntity, IHasDomainEvent
+public class Picture : AuditableEntity
 {
-    public List<DomainEvent> DomainEvents { get; set; }
     public int Id { get; set; }
+
+    public string SmallUrl { get; set; }
+    public string BigUrl { get; set; }
 
     public Product Product { get; set; } = null!;
 }

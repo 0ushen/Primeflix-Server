@@ -10,10 +10,7 @@ namespace Primeflix.WebUI.Controllers;
 public class ProductsController : ApiControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<PaginatedList<ProductDto>>> GetProductsWithPagination([FromQuery] GetProductsWithPaginationQuery query)
-    {
-        var test = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        return await Mediator.Send(query);
-    }
+    public async Task<ActionResult<PaginatedList<ProductDto>>> GetProductsWithPagination(
+        [FromQuery] GetProductsWithPaginationQuery query) => 
+        await Mediator.Send(query);
 }

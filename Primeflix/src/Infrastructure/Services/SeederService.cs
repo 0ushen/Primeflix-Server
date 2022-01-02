@@ -17,10 +17,11 @@ public class SeederService : ISeederService
     private readonly IOMDBMovieService _omdbMovieService;
     private readonly IApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
-    private readonly Random _random = new Random();
 
-
-    public SeederService(IOMDBMovieService omdbMovieService, IApplicationDbContext dbContext, IMapper mapper)
+    public SeederService(
+        IOMDBMovieService omdbMovieService, 
+        IApplicationDbContext dbContext,
+        IMapper mapper)
     {
         _omdbMovieService = omdbMovieService;
         _dbContext = dbContext;
@@ -42,17 +43,7 @@ public class SeederService : ISeederService
     {
         var movies = await GetMoviesAbout(movieType);
 
-        var config = new MapperConfiguration(cfg =>
-            cfg.CreateMap<OMDBMovieResult, Product>()
-                .ForMember(o => o.ImdbID, i => i.MapFrom(x => x.imdbID))
-                .ForMember(o => o.Price, _ => _random.Next(20))
-                .ForMember(o => o.SalePrice, _ => _random.Next(16))
-                .ForMember(o => o.Discount, i => i.MapFrom(x => 50))
-                .ForMember(o => o.Stock, _ => _random.Next(10))
-
-        );
-        var mapper = new Mapper(config);
-        var products = mapper.Map<List<OMDBMovieResult>, List<Product>>(movies);
+        var products = _mapper.Map<List<OMDBMovieResult>, List<Product>>(movies);
 
         await _dbContext.Products.AddRangeAsync(products);
         await _dbContext.SaveChangesAsync();
@@ -81,6 +72,6 @@ public class SeederService : ISeederService
 
         return movies;
     }
-
-    
 }
+
+

@@ -8,6 +8,5 @@ public class PictureConfiguration : IEntityTypeConfiguration<Picture>
 {
     public void Configure(EntityTypeBuilder<Picture> builder)
     {
-        builder.Ignore(e => e.DomainEvents);
     }
 }
