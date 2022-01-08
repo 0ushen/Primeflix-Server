@@ -1,18 +1,17 @@
-﻿using System.Text.Json;
+﻿using System.Linq;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Primeflix.Application.Common.Interfaces;
-using Primeflix.Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Primeflix.Application.OMDB.Models;
+using Primeflix.Application.Common.Interfaces;
+using Primeflix.Application.Common.Mappings;
+using Primeflix.Application.Common.Models;
 using Primeflix.Application.Products.Models;
 
-namespace Primeflix.Application.Products.Queries.GetProductsWithPagination;
+namespace Primeflix.Application.Products.Queries;
 
 public class GetProductsWithPaginationQuery : IRequest<PaginatedList<ProductDto>>
 {
-    public int ListId { get; set; }
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
 }
@@ -32,11 +31,11 @@ public class GetProductsWithPaginationQueryHandler : IRequestHandler<GetProducts
 
     public async Task<PaginatedList<ProductDto>> Handle(GetProductsWithPaginationQuery request, CancellationToken cancellationToken)
     {
-        var items = await _context.Products.AsNoTracking()
+        var items = await _context.Products.OrderBy(x => x.Title)
                                            .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
-                                           .ToListAsync(cancellationToken);
+                                           .PaginatedListAsync(request.PageNumber, request.PageSize);
 
-        return new PaginatedList<ProductDto>(items, 5, 1, 8);
+        return items;
     }
 
     

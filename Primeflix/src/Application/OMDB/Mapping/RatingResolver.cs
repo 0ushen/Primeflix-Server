@@ -5,9 +5,9 @@ using Primeflix.Domain.Entities;
 
 namespace Primeflix.Application.OMDB.Mapping;
 
-public class RatingResolver : IValueResolver<OMDBMovieResult, Product, int>
+public class RatingResolver : IValueResolver<OMDBMediaResult, Product, int>
 {
-    public int Resolve(OMDBMovieResult source, Product destination, int destMember, ResolutionContext context)
+    public int Resolve(OMDBMediaResult source, Product destination, int destMember, ResolutionContext context)
     {
         var succeeded = decimal.TryParse(source.imdbRating, NumberStyles.Float, CultureInfo.InvariantCulture, out var result);
 

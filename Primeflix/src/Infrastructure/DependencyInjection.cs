@@ -49,11 +49,11 @@ public static class DependencyInjection
             options.AddPolicy("ApiReader", policy => policy.RequireClaim("scope", "api.read"));
         });
 
-        //services.AddHttpClient<IOMDBMovieService, OMDBMovieService>(client =>
+        //services.AddHttpClient<IOMDBMediaService, OMDBMediaService>(client =>
         //{
         //    client.BaseAddress = new Uri(configuration["OMDB:BaseUrl"]);
         //});
-        services.AddHttpClient<IOMDBMovieService, OMDBMovieService>();
+        services.AddHttpClient<IOMDBMediaService, OMDBMediaService>();
         services.AddTransient<ISeederService, SeederService>();
 
         return services;

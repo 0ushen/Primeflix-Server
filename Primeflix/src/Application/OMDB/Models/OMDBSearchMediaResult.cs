@@ -1,6 +1,6 @@
 ﻿namespace Primeflix.Application.OMDB.Models;
 
-public class OMDBSearchMovieResult
+public class OMDBSearchMediaResult
 {
     public string Title { get; set; }
     public string Year { get; set; }

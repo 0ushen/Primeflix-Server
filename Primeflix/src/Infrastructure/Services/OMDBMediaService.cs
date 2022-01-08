@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Web;
 using Microsoft.Extensions.Configuration;
 using Primeflix.Application.Common.Interfaces;
@@ -7,12 +6,12 @@ using Primeflix.Application.OMDB.Models;
 
 namespace Primeflix.Infrastructure.Services;
 
-public class OMDBMovieService : IOMDBMovieService
+public class OMDBMediaService : IOMDBMediaService
 {
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl; 
 
-    public OMDBMovieService(HttpClient httpClient, IConfiguration configuration)
+    public OMDBMediaService(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
         var omdbBaseUrl = configuration["OMDB:BaseUrl"];
@@ -20,37 +19,24 @@ public class OMDBMovieService : IOMDBMovieService
         _baseUrl = $"{omdbBaseUrl}?apikey={apiKey}";
     }
 
-    public async Task<OMDBMovieResult> GetMovieById(OMDBIdRequest request)
+    public async Task<OMDBMediaResult?> GetMediaById(OMDBIdRequest request)
     {
-        var result = await ExecuteQuery<OMDBMovieResult, OMDBIdRequest>(request);
-
-        return result;
+        return await ExecuteQuery<OMDBMediaResult, OMDBIdRequest>(request);
     }
 
-    public async Task<OMDBMovieResult> GetMovieByTitle(OMDBTitleRequest request)
-    {
-        var result = await ExecuteQuery<OMDBMovieResult, OMDBTitleRequest>(request);
+    public async Task<OMDBMediaResult?> GetMediaByTitle(OMDBTitleRequest request) => 
+        await ExecuteQuery<OMDBMediaResult, OMDBTitleRequest>(request);
 
-        return result;
-    }
+    public async Task<OMDBSearchResult?> SearchMedias(OMDBSearchRequest request) =>
+        await ExecuteQuery<OMDBSearchResult, OMDBSearchRequest>(request);
 
-    public async Task<OMDBSearchResult> SearchMovies(OMDBSearchRequest request)
-    {
-
-        var result = await ExecuteQuery<OMDBSearchResult, OMDBSearchRequest>(request);
-
-        return result;
-    }
-
-    private async Task<TResultModel> ExecuteQuery<TResultModel, TRequestModel>(TRequestModel requestModel)
+    private async Task<TResultModel?> ExecuteQuery<TResultModel, TRequestModel>(TRequestModel requestModel)
         where TRequestModel : class, new()
     {
         var url = _baseUrl + "&" + GetQueryString(requestModel);
         var responseString = await _httpClient.GetStringAsync(url);
 
-        var result = JsonSerializer.Deserialize<TResultModel>(responseString);
-
-        return result;
+        return JsonSerializer.Deserialize<TResultModel>(responseString);
     }
 
     private static string GetQueryString<TRequestModel>(TRequestModel requestModel) 

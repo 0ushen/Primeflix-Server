@@ -9,7 +9,7 @@ public class Rating
     public string Value { get; set; }
 }
 
-public class OMDBMovieResult : IMapFrom<Product>
+public class OMDBMediaResult : IMapFrom<Product>
 {
     public string Title { get; set; }
     public string Year { get; set; }

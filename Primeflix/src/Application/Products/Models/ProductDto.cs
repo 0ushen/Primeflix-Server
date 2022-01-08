@@ -11,7 +11,7 @@ public class ProductDto : IMapFrom<Product>
     public decimal Price { get; set; }
     public decimal SalePrice { get; set; }
     public int Discount { get; set; }
-    public List<MoviePictureDto> Pictures { get; set; }
+    public List<MediaPictureDto> Pictures { get; set; }
     public string ShortDetails { get; set; }
     public string Description { get; set; }
     public int Stock { get; set; }
@@ -31,7 +31,7 @@ public class ProductDto : IMapFrom<Product>
 
         profile.CreateMap<Product, ProductDto>()
             .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Title))
-            .ForMember(d => d.Pictures, opt => opt.MapFrom(s => s.Pictures.Select(x => new MoviePictureDto
+            .ForMember(d => d.Pictures, opt => opt.MapFrom(s => s.Pictures.Select(x => new MediaPictureDto
             {
                 Small = x.SmallUrl,
                 Big = x.BigUrl
@@ -41,7 +41,7 @@ public class ProductDto : IMapFrom<Product>
             .ForMember(d => d.Brand, opt => opt.MapFrom(_ => "movie"))
             .ForMember(d => d.NewPro, opt => opt.MapFrom(_ => true))
             .ForMember(d => d.Sale, opt => opt.MapFrom(_ => gen.Next(100) <= 30))
-            .ForMember(d => d.Category, opt => opt.MapFrom(_ => "movie"))
+            .ForMember(d => d.Category, opt => opt.MapFrom(s => s.Type))
             .ForMember(d => d.Tags, opt => opt.MapFrom(_ => tags))
             .ForMember(d => d.Colors, opt => opt.MapFrom(_ => colors));
 

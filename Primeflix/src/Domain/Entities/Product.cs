@@ -24,4 +24,5 @@ public class Product : AuditableEntity
     public int Stock { get; set; }
 
     public IList<Picture> Pictures { get; private set; } = new List<Picture>();
+    public string? Type { get; set; }
 }

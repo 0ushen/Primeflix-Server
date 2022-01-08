@@ -6,7 +6,30 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/Products": {
+    "/api/Products/GetAllProducts": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_GetAllProducts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Products/GetProductsWithPagination": {
       "get": {
         "tags": [
           "Products"
@@ -14,7 +37,7 @@
         "operationId": "Products_GetProductsWithPagination",
         "parameters": [
           {
-            "name": "ListId",
+            "name": "PageNumber",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -23,22 +46,13 @@
             "x-position": 1
           },
           {
-            "name": "PageNumber",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "x-position": 2
-          },
-          {
             "name": "PageSize",
             "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
             },
-            "x-position": 3
+            "x-position": 2
           }
         ],
         "responses": {
@@ -58,36 +72,6 @@
   },
   "components": {
     "schemas": {
-      "PaginatedListOfProductDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductDto"
-            }
-          },
-          "pageNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hasPreviousPage": {
-            "type": "boolean"
-          },
-          "hasNextPage": {
-            "type": "boolean"
-          }
-        }
-      },
       "ProductDto": {
         "type": "object",
         "additionalProperties": false,
@@ -114,7 +98,7 @@
           "pictures": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/MoviePictureDto"
+              "$ref": "#/components/schemas/MediaPictureDto"
             }
           },
           "shortDetails": {
@@ -157,7 +141,7 @@
           }
         }
       },
-      "MoviePictureDto": {
+      "MediaPictureDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -166,6 +150,36 @@
           },
           "big": {
             "type": "string"
+          }
+        }
+      },
+      "PaginatedListOfProductDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductDto"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "hasNextPage": {
+            "type": "boolean"
           }
         }
       }

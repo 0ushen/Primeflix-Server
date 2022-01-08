@@ -14,69 +14,92 @@ public class SeederService : ISeederService
         "Spiderman"
     };
 
-    private readonly IOMDBMovieService _omdbMovieService;
+    private readonly IList<string> _seriesAbout = new List<string>
+    {
+        "Friends",
+        "Futurama",
+        "Batman",
+        "Superman"
+    };
+
+    private readonly IOMDBMediaService _iomdbMediaService;
     private readonly IApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
 
     public SeederService(
-        IOMDBMovieService omdbMovieService, 
+        IOMDBMediaService iomdbMediaService, 
         IApplicationDbContext dbContext,
         IMapper mapper)
     {
-        _omdbMovieService = omdbMovieService;
+        _iomdbMediaService = iomdbMediaService;
         _dbContext = dbContext;
         _mapper = mapper;
     }
     public async Task SeedAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         if(!_dbContext.Products.Any())
-            await SeedMoviesToDatabase();
+            await SeedMediasToDatabase();
     }
 
-    private async Task SeedMoviesToDatabase()
+    private async Task SeedMediasToDatabase()
     {
         foreach (var movieType in _moviesAbout)
-            await AddMoviesAbout(movieType);
+            await AddMediasAbout(movieType, "movie");
+
+        foreach (var movieType in _seriesAbout)
+            await AddMediasAbout(movieType, "series");
     }
 
-    private async Task AddMoviesAbout(string movieType)
+    private async Task AddMediasAbout(string mediaKeyword, string mediaType)
     {
-        var movies = await GetMoviesAbout(movieType);
+        var medias = await GetMediasAbout(mediaKeyword, mediaType);
 
-        var products = _mapper.Map<List<OMDBMovieResult>, List<Product>>(movies);
+        var products = _mapper.Map<List<OMDBMediaResult>, List<Product>>(medias);
 
         await _dbContext.Products.AddRangeAsync(products);
         await _dbContext.SaveChangesAsync();
 
     }
 
-    private async Task<List<OMDBMovieResult>> GetMoviesAbout(string movieType)
+    private async Task<List<OMDBMediaResult>> GetMediasAbout(string mediaKeyword, string mediaType)
     {
-        var movies = new List<OMDBMovieResult>();
+        var medias = new List<OMDBMediaResult>();
 
-        var moviePreviews = await _omdbMovieService.SearchMovies(new OMDBSearchRequest
+        var mediaPreviews = await _iomdbMediaService.SearchMedias(new OMDBSearchRequest
         {
-            s = movieType,
+            s = mediaKeyword,
+            type = mediaType
         });
 
-        foreach (var imdbId in moviePreviews.Search.Select(x => x.imdbID))
+        if (mediaPreviews is null)
+            throw new Exception("Could not fetch movie previews");
+
+        foreach (var mediaPreview in mediaPreviews.Search.Where(moviePreview => !string.IsNullOrEmpty(moviePreview.Poster) && !string.Equals(moviePreview.Poster, "N/A")))
         {
-            var fullMovie = await _omdbMovieService.GetMovieById(new OMDBIdRequest
+            var fullMedia = await _iomdbMediaService.GetMediaById(new OMDBIdRequest
             {
-                i = imdbId,
+                i = mediaPreview.imdbID,
                 plot = "full"
             });
 
-            fullMovie.Summary = (await _omdbMovieService.GetMovieById(new OMDBIdRequest
-            {
-                i = imdbId,
-                plot = "small"
-            })).Plot;
+            if (fullMedia is null)
+                continue;
 
-            movies.Add(fullMovie);
+            var mediaWithFullPlot = await _iomdbMediaService.GetMediaById(new OMDBIdRequest
+            {
+                i = mediaPreview.imdbID,
+                plot = "small"
+            });
+
+            if (mediaWithFullPlot is null)
+                continue;
+
+            fullMedia.Summary = mediaWithFullPlot.Plot;
+
+            medias.Add(fullMedia);
         }
 
-        return movies;
+        return medias;
     }
 }
 

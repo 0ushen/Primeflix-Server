@@ -4,13 +4,13 @@ using Primeflix.Domain.Entities;
 
 namespace Primeflix.Application.OMDB.Mapping;
 
-public class OMDBMovieResultToProductMapper : Profile
+public class OMDBMediaResultToProductMapper : Profile
 {
     private readonly Random _random = new();
 
-    public OMDBMovieResultToProductMapper()
+    public OMDBMediaResultToProductMapper()
     {
-        CreateMap<OMDBMovieResult, Product>()
+        CreateMap<OMDBMediaResult, Product>()
             .ForMember(o => o.ImdbID, i => i.MapFrom(x => x.imdbID))
             .ForMember(o => o.Discount, i => i.MapFrom(_ => _random.Next(1, 10) * 10))
             .ForMember(o => o.SalePrice, i => i.MapFrom(_ => _random.Next(10, 25)))
