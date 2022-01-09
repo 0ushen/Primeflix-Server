@@ -5,7 +5,9 @@ namespace Primeflix.Application.Common.Interfaces;
 
 public interface IApplicationDbContext
 {
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = new());
-
     DbSet<Product> Products { get; }
+    DbSet<Picture> Pictures { get; }
+    DbSet<Address> Addresses { get; }
+    DbSet<PrimeflixUser> Users { get; }
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = new());
 }

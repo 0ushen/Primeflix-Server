@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Primeflix.Application.Common.Interfaces;
 using Primeflix.Domain.Common;
-using Microsoft.EntityFrameworkCore;
 using Primeflix.Domain.Entities;
 
 namespace Primeflix.Infrastructure.Persistence;
@@ -14,19 +14,21 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
         ICurrentUserService currentUserService,
-        IDomainEventService domainEventService) 
-            : base(options)
+        IDomainEventService domainEventService)
+        : base(options)
     {
         _currentUserService = currentUserService;
         _domainEventService = domainEventService;
     }
 
+    public DbSet<Picture> Pictures => Set<Picture>();
+    public DbSet<Address> Addresses => Set<Address>();
+    public DbSet<PrimeflixUser> Users => Set<PrimeflixUser>();
     public DbSet<Product> Products => Set<Product>();
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
         foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
-        {
             switch (entry.State)
             {
                 case EntityState.Added:
@@ -39,13 +41,12 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                     entry.Entity.LastModified = DateTime.Now;
                     break;
             }
-        }
 
         var events = ChangeTracker.Entries<IHasDomainEvent>()
-                .Select(x => x.Entity.DomainEvents)
-                .SelectMany(x => x)
-                .Where(domainEvent => !domainEvent.IsPublished)
-                .ToArray();
+            .Select(x => x.Entity.DomainEvents)
+            .SelectMany(x => x)
+            .Where(domainEvent => !domainEvent.IsPublished)
+            .ToArray();
 
         var result = await base.SaveChangesAsync(cancellationToken);
 

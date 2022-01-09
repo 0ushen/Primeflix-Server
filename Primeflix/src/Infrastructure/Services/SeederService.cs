@@ -7,6 +7,11 @@ namespace Primeflix.Infrastructure.Services;
 
 public class SeederService : ISeederService
 {
+    private readonly IApplicationDbContext _dbContext;
+
+    private readonly IOMDBMediaService _iomdbMediaService;
+    private readonly IMapper _mapper;
+
     private readonly IList<string> _moviesAbout = new List<string>
     {
         "Batman",
@@ -22,12 +27,8 @@ public class SeederService : ISeederService
         "Superman"
     };
 
-    private readonly IOMDBMediaService _iomdbMediaService;
-    private readonly IApplicationDbContext _dbContext;
-    private readonly IMapper _mapper;
-
     public SeederService(
-        IOMDBMediaService iomdbMediaService, 
+        IOMDBMediaService iomdbMediaService,
         IApplicationDbContext dbContext,
         IMapper mapper)
     {
@@ -35,19 +36,20 @@ public class SeederService : ISeederService
         _dbContext = dbContext;
         _mapper = mapper;
     }
-    public async Task SeedAsync(CancellationToken cancellationToken = new CancellationToken())
+
+    public async Task SeedAsync(CancellationToken cancellationToken = new())
     {
-        if(!_dbContext.Products.Any())
+        if (!_dbContext.Products.Any())
             await SeedMediasToDatabase();
     }
 
     private async Task SeedMediasToDatabase()
     {
-        foreach (var movieType in _moviesAbout)
-            await AddMediasAbout(movieType, "movie");
+        foreach (var keyword in _moviesAbout)
+            await AddMediasAbout(keyword, "movie");
 
-        foreach (var movieType in _seriesAbout)
-            await AddMediasAbout(movieType, "series");
+        foreach (var keyword in _seriesAbout)
+            await AddMediasAbout(keyword, "series");
     }
 
     private async Task AddMediasAbout(string mediaKeyword, string mediaType)
@@ -58,7 +60,6 @@ public class SeederService : ISeederService
 
         await _dbContext.Products.AddRangeAsync(products);
         await _dbContext.SaveChangesAsync();
-
     }
 
     private async Task<List<OMDBMediaResult>> GetMediasAbout(string mediaKeyword, string mediaType)
@@ -74,7 +75,8 @@ public class SeederService : ISeederService
         if (mediaPreviews is null)
             throw new Exception("Could not fetch movie previews");
 
-        foreach (var mediaPreview in mediaPreviews.Search.Where(moviePreview => !string.IsNullOrEmpty(moviePreview.Poster) && !string.Equals(moviePreview.Poster, "N/A")))
+        foreach (var mediaPreview in mediaPreviews.Search.Where(moviePreview =>
+                     !string.IsNullOrEmpty(moviePreview.Poster) && !string.Equals(moviePreview.Poster, "N/A")))
         {
             var fullMedia = await _iomdbMediaService.GetMediaById(new OMDBIdRequest
             {
@@ -102,5 +104,3 @@ public class SeederService : ISeederService
         return medias;
     }
 }
-
-
