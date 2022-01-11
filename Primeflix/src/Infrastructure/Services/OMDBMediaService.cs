@@ -8,8 +8,8 @@ namespace Primeflix.Infrastructure.Services;
 
 public class OMDBMediaService : IOMDBMediaService
 {
+    private readonly string _baseUrl;
     private readonly HttpClient _httpClient;
-    private readonly string _baseUrl; 
 
     public OMDBMediaService(HttpClient httpClient, IConfiguration configuration)
     {
@@ -24,11 +24,15 @@ public class OMDBMediaService : IOMDBMediaService
         return await ExecuteQuery<OMDBMediaResult, OMDBIdRequest>(request);
     }
 
-    public async Task<OMDBMediaResult?> GetMediaByTitle(OMDBTitleRequest request) => 
-        await ExecuteQuery<OMDBMediaResult, OMDBTitleRequest>(request);
+    public async Task<OMDBMediaResult?> GetMediaByTitle(OMDBTitleRequest request)
+    {
+        return await ExecuteQuery<OMDBMediaResult, OMDBTitleRequest>(request);
+    }
 
-    public async Task<OMDBSearchResult?> SearchMedias(OMDBSearchRequest request) =>
-        await ExecuteQuery<OMDBSearchResult, OMDBSearchRequest>(request);
+    public async Task<OMDBSearchResult?> SearchMedias(OMDBSearchRequest request)
+    {
+        return await ExecuteQuery<OMDBSearchResult, OMDBSearchRequest>(request);
+    }
 
     private async Task<TResultModel?> ExecuteQuery<TResultModel, TRequestModel>(TRequestModel requestModel)
         where TRequestModel : class, new()
@@ -39,13 +43,13 @@ public class OMDBMediaService : IOMDBMediaService
         return JsonSerializer.Deserialize<TResultModel>(responseString);
     }
 
-    private static string GetQueryString<TRequestModel>(TRequestModel requestModel) 
+    private static string GetQueryString<TRequestModel>(TRequestModel requestModel)
         where TRequestModel : class, new()
     {
         var properties = requestModel.GetType()
-                                     .GetProperties()
-                                     .Where(p => p.GetValue(requestModel, null) != null)
-                                     .Select(p => p.Name + "=" + HttpUtility.UrlEncode(p.GetValue(requestModel)?.ToString()));
+            .GetProperties()
+            .Where(p => p.GetValue(requestModel, null) != null)
+            .Select(p => p.Name + "=" + HttpUtility.UrlEncode(p.GetValue(requestModel)?.ToString()));
 
         return string.Join("&", properties.ToArray());
     }

@@ -1,13 +1,13 @@
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
+using NSwag;
+using NSwag.Generation.Processors.Security;
 using Primeflix.Application;
 using Primeflix.Application.Common.Interfaces;
 using Primeflix.Infrastructure;
 using Primeflix.Infrastructure.Persistence;
 using Primeflix.WebUI.Filters;
 using Primeflix.WebUI.Services;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
-using NSwag;
-using NSwag.Generation.Processors.Security;
 
 namespace Primeflix.WebUI;
 
@@ -35,7 +35,7 @@ public class Startup
             .AddDbContextCheck<ApplicationDbContext>();
 
         services.AddControllersWithViews(options => options.Filters.Add<ApiExceptionFilterAttribute>())
-                .AddFluentValidation(x => x.AutomaticValidationEnabled = false);
+            .AddFluentValidation(x => x.AutomaticValidationEnabled = false);
 
         services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
@@ -59,8 +59,8 @@ public class Startup
                 builder =>
                 {
                     builder.AllowAnyMethod()
-                           .AllowAnyHeader()   
-                           .WithOrigins("http://localhost:4200");
+                        .AllowAnyHeader()
+                        .WithOrigins(Configuration["ClientUrl"]);
                 });
         });
     }
@@ -97,8 +97,8 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller}/{action=Index}/{id?}");
+                "default",
+                "{controller}/{action=Index}/{id?}");
         });
     }
 }

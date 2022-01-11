@@ -1,11 +1,11 @@
-﻿using Primeflix.Application.Common.Interfaces;
-using Primeflix.Infrastructure.Identity;
-using Primeflix.Infrastructure.Persistence;
-using Primeflix.Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Primeflix.Application.Common.Interfaces;
+using Primeflix.Infrastructure.Identity;
+using Primeflix.Infrastructure.Persistence;
+using Primeflix.Infrastructure.Services;
 
 namespace Primeflix.Infrastructure;
 
@@ -14,17 +14,13 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         if (configuration.GetValue<bool>("UseInMemoryDatabase"))
-        {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseInMemoryDatabase("PrimeflixDb"));
-        }
         else
-        {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
-        }
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
@@ -39,7 +35,7 @@ public static class DependencyInjection
             })
             .AddJwtBearer(config =>
             {
-                config.Authority = "https://localhost:6001";
+                config.Authority = configuration["IdentityServerUrl"];
                 config.Audience = "PrimeflixApi";
                 config.RequireHttpsMetadata = false;
             });
@@ -49,10 +45,6 @@ public static class DependencyInjection
             options.AddPolicy("ApiReader", policy => policy.RequireClaim("scope", "api.read"));
         });
 
-        //services.AddHttpClient<IOMDBMediaService, OMDBMediaService>(client =>
-        //{
-        //    client.BaseAddress = new Uri(configuration["OMDB:BaseUrl"]);
-        //});
         services.AddHttpClient<IOMDBMediaService, OMDBMediaService>();
         services.AddTransient<ISeederService, SeederService>();
 
